@@ -1,39 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Sitemap Viewer</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    ul { line-height: 1.6; }
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #1e90ff;
+      margin-bottom: 30px;
+    }
+
+    .url-entry {
+      border-bottom: 1px solid #333;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+    }
+
+    .url-entry a {
+      color: #87cefa;
+      font-size: 18px;
+      text-decoration: none;
+    }
+
+    .url-entry a:hover {
+      text-decoration: underline;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: #ccc;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
-  <h1>Maricopa Links Sitemap</h1>
-  <ul id="sitemap"></ul>
+  <h1>📄 Sitemap Viewer</h1>
+  <div id="output">Loading sitemap...</div>
 
   <script>
-    // Change this to match your sitemap filename
-    const sitemapURL = 'sitemap.xml';
+    const xmlFile = 'sitemap.xml'; // Local sitemap file in same directory
 
-    fetch(sitemapURL)
+    fetch(xmlFile)
       .then(response => response.text())
       .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
       .then(data => {
-        const urls = data.querySelectorAll("url > loc");
-        const list = document.getElementById("sitemap");
-        urls.forEach(url => {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = url.textContent;
-          a.textContent = url.textContent;
-          a.target = "_blank";
-          li.appendChild(a);
-          list.appendChild(li);
-        });
+        const urls = data.getElementsByTagName("url");
+        const container = document.getElementById("output");
+        container.innerHTML = "";
+
+        for (let i = 0; i < urls.length; i++) {
+          const loc = urls[i].getElementsByTagName("loc")[0]?.textContent || '';
+          const lastmod = urls[i].getElementsByTagName("lastmod")[0]?.textContent || 'N/A';
+          const priority = urls[i].getElementsByTagName("priority")[0]?.textContent || 'N/A';
+          const freq = urls[i].getElementsByTagName("changefreq")[0]?.textContent || 'N/A';
+
+          const div = document.createElement("div");
+          div.className = "url-entry";
+
+          div.innerHTML = `
+            <a href="${loc}" target="_blank">${loc}</a>
+            <div class="meta">
+              Last modified: ${lastmod}<br>
+              Priority: ${priority} | Change frequency: ${freq}
+            </div>
+          `;
+
+          container.appendChild(div);
+        }
       })
       .catch(err => {
-        document.body.innerHTML += '<p>Error loading sitemap.</p>';
+        document.getElementById("output").innerHTML = `<p>Error loading sitemap: ${err.message}</p>`;
         console.error(err);
       });
   </script>
