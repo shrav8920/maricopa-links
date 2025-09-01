@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sitemap Viewer</title>
+  <title>Full Sitemap Links</title>
   <style>
     body {
       background-color: #000;
       color: #fff;
       font-family: Arial, sans-serif;
       padding: 40px;
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
     }
 
@@ -18,67 +18,53 @@
       margin-bottom: 30px;
     }
 
-    .url-entry {
-      border-bottom: 1px solid #333;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-    }
-
-    .url-entry a {
+    a {
+      display: block;
+      margin-bottom: 10px;
       color: #87cefa;
-      font-size: 18px;
       text-decoration: none;
+      font-size: 16px;
     }
 
-    .url-entry a:hover {
+    a:hover {
       text-decoration: underline;
-    }
-
-    .meta {
-      font-size: 13px;
-      color: #ccc;
-      margin-top: 5px;
+      color: #fff;
     }
   </style>
 </head>
 <body>
-  <h1>📄 Sitemap Viewer</h1>
-  <div id="output">Loading sitemap...</div>
+  <h1>📄 Sitemap URLs</h1>
+  <div id="links">Loading URLs...</div>
 
   <script>
-    const xmlFile = 'sitemap.xml'; // Local sitemap file in same directory
+    const sitemapURL = 'sitemap.xml';
 
-    fetch(xmlFile)
+    fetch(sitemapURL)
       .then(response => response.text())
-      .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
-      .then(data => {
-        const urls = data.getElementsByTagName("url");
-        const container = document.getElementById("output");
+      .then(xmlText => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+        const locElements = xmlDoc.getElementsByTagNameNS("http://www.sitemaps.org/schemas/sitemap/0.9", "loc");
+        
+        const container = document.getElementById("links");
         container.innerHTML = "";
 
-        for (let i = 0; i < urls.length; i++) {
-          const loc = urls[i].getElementsByTagName("loc")[0]?.textContent || '';
-          const lastmod = urls[i].getElementsByTagName("lastmod")[0]?.textContent || 'N/A';
-          const priority = urls[i].getElementsByTagName("priority")[0]?.textContent || 'N/A';
-          const freq = urls[i].getElementsByTagName("changefreq")[0]?.textContent || 'N/A';
+        for (let i = 0; i < locElements.length; i++) {
+          const url = locElements[i].textContent;
+          const link = document.createElement("a");
+          link.href = url;
+          link.target = "_blank";
+          link.textContent = url;
+          container.appendChild(link);
+        }
 
-          const div = document.createElement("div");
-          div.className = "url-entry";
-
-          div.innerHTML = `
-            <a href="${loc}" target="_blank">${loc}</a>
-            <div class="meta">
-              Last modified: ${lastmod}<br>
-              Priority: ${priority} | Change frequency: ${freq}
-            </div>
-          `;
-
-          container.appendChild(div);
+        if (locElements.length === 0) {
+          container.innerHTML = "<p>No URLs found in sitemap.xml.</p>";
         }
       })
-      .catch(err => {
-        document.getElementById("output").innerHTML = `<p>Error loading sitemap: ${err.message}</p>`;
-        console.error(err);
+      .catch(error => {
+        document.getElementById("links").innerHTML = "<p>Error loading sitemap.</p>";
+        console.error(error);
       });
   </script>
 </body>
