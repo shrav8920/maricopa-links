@@ -59,11 +59,12 @@ https://www.includehelp.com/tools/xml-sitemap-generator.aspx
 	<priority>1.0</priority>
 </url>
 <url>
-	<loc>"http://www.secretsearchenginelabs.com/add-url.php?subtime=1756558798&newurl=https://maricopaepoxyflooring.com/"</loc>
-	<lastmod>2025-09-01</lastmod>
-	<changefreq>hourly</changefreq>
-	<priority>1.0</priority>
+  <loc>http://www.secretsearchenginelabs.com/add-url.php?subtime=1756558798&amp;newurl=https://maricopaepoxyflooring.com/</loc>
+  <lastmod>2025-09-01</lastmod>
+  <changefreq>hourly</changefreq>
+  <priority>1.0</priority>
 </url>
+
 <url>
 	<loc>"https://account.kompas.com/login/a29tcGFz/aHR0cHM6Ly9tYXJpY29wYWVwb3h5Zmxvb3JpbmcuY29tLw"</loc>
 	<lastmod>2025-09-01</lastmod>
