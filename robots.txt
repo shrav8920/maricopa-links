@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shrav8920.github.io/maricopa-links/sitemap.xml
